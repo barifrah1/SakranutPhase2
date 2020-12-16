@@ -26,7 +26,7 @@ if __name__ == '__main__':
     print('feature_num', feature_num)
     model = NN.Net(feature_num)
     NN.train(X_train, y_train, model, X_test, y_test,
-             batch_size=1000,
+             batch_size=2000,
              n_epochs=300,
              criterion=nn.BCELoss())
     # optimizer = nn.BCELoss)

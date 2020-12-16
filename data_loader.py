@@ -73,7 +73,7 @@ class DataLoader:
         country = pd.get_dummies(self.data['country'], drop_first=True)
         word_frequencies_dict = self.hist()
         s = {k: word_frequencies_dict[k]
-             for k in list(word_frequencies_dict)[:200] if word_frequencies_dict[k][0] >= 500 and (word_frequencies_dict[k][2] >= 0.70 or word_frequencies_dict[k][2] <= 0.38)}
+             for k in list(word_frequencies_dict)[:300] if (word_frequencies_dict[k][2] >= 0.60 or word_frequencies_dict[k][2] <= 0.45)}
         s_keys = s.keys()
         for key in s_keys:
             self.data[key] = 0
