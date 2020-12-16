@@ -17,8 +17,8 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(feature_num, 150)
         self.dropout = nn.Dropout(0.5)
         #self.bn1 = nn.BatchNorm1d(num_features=15)
-        self.fc2 = nn.Linear(150, 60)
-        self.fc3 = nn.Linear(60, 30)
+        self.fc2 = nn.Linear(150, 70)
+        self.fc3 = nn.Linear(70, 30)
         self.fc4 = nn.Linear(30, 10)
         self.fc5 = nn.Linear(10, 1)
         #self.dropout = nn.Dropout(0.5)
@@ -61,7 +61,7 @@ def train(X_train, y_train, model, x_test, y_test,
           ):
     #optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
     optimizer = torch.optim.Adam(
-        model.parameters(), lr=1e-4, weight_decay=1e-9)
+        model.parameters(), lr=1e-3, weight_decay=1e-5)
     batch_no = len(X_train) // batch_size
     # print(batch_no)
     train_loss = 0

@@ -1,3 +1,5 @@
+from imblearn.over_sampling import RandomOverSampler
+from nltk.corpus import stopwords
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,7 +10,7 @@ from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import nltk
-from nltk.corpus import stopwords
+nltk.download('stopwords')
 # split a dataset into train and test sets
 
 
@@ -29,9 +31,9 @@ class DataLoader:
         states = self.data["state"]
 
         di = {}
-        stops = stopwords.words()
+        stops = stopwords.words('english')
         for i, name in enumerate(names):
-            if(states[i] == "successful"):
+            if(states[i] == 1):
                 state = 1
             else:
                 state = 0
@@ -49,7 +51,9 @@ class DataLoader:
         return sorted_dict
 
     def preprocess(self):
-
+        """g = self.data.groupby('state')
+        self.data = g.apply(lambda x: x.sample(
+            g.size().min()).reset_index(drop=True))"""
         self.data = self.data.loc[self.data['state'].isin(
             ['failed', 'successful'])]
         # drop na values
@@ -69,7 +73,7 @@ class DataLoader:
         country = pd.get_dummies(self.data['country'], drop_first=True)
         word_frequencies_dict = self.hist()
         s = {k: word_frequencies_dict[k]
-             for k in list(word_frequencies_dict)[:250]}
+             for k in list(word_frequencies_dict)[:200] if word_frequencies_dict[k][0] >= 500 and (word_frequencies_dict[k][2] >= 0.70 or word_frequencies_dict[k][2] <= 0.38)}
         s_keys = s.keys()
         for key in s_keys:
             self.data[key] = 0
@@ -95,6 +99,8 @@ class DataLoader:
         X = self.data.iloc[:, 2:].values
         Scaler1 = StandardScaler()
         X = Scaler1.fit_transform(X)
+        """oversample = RandomOverSampler()
+        X, Y = oversample.fit_resample(X, Y)"""
         return X, Y, features
         # balance data:
         """g=self.data.groupby('state')
