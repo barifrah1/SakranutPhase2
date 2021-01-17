@@ -110,9 +110,9 @@ class Q_Learning():
         return chosenRandomAction, next_state"""
 
     def _reward(self, val_loss, epoch):
-        epsilon = (100*np.exp(-val_loss) - 100*np.exp(-0.62))
+        epsilon = 100*(0.62-val_loss)
         if(val_loss < 0.595):
-            return 10000*(0.595-val_loss)
+            return 10000 + (0.595-val_loss)*10000
         return epsilon
 
     def _addStateAndPossibleActionsToQ(self, hp):
@@ -228,7 +228,7 @@ class Q_Learning():
                         f"Current validation loss on epoch {iter+1} is: {trained_val_loss} ")"""
             reward_by_episode.append(avg_val_loss/self.args.num_of_iters)
             print(
-                f"episode {episode+1} : avg_reward: {acc_reward/self.args.num_of_iters}  ")
+                f"episode {episode+1} : avg_reward: {avg_val_loss/self.args.num_of_iters}  ")
             self.updateQfile(reward_by_episode)
             if(episode % 10 == 0):  # "and episode != 0"""):
                 self.calcPolicy()

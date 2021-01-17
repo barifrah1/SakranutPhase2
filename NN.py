@@ -118,7 +118,7 @@ def train(X_train, y_train, model, X_val, y_val,
         train_loss_list.append(
             criterion(model(x_var).flatten(), torch.tensor(y_train).float()).item())
     threshold = 0
-    for epoch in tqdm(range(n_epochs)):
+    for epoch in range(n_epochs):
         model.train()
         for i in range(batch_no):
             start = i*batch_size
