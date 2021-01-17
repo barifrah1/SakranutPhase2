@@ -46,13 +46,16 @@ class Q_Learning():
         feature_index = self.hyperparams_dict[action[0]]
         options_vector = hp.optional_values[action[0]]
         curren_val_index = options_vector.index(state[feature_index])
-        if(action[1] == 'U'):
-            next_state[feature_index] = options_vector[curren_val_index-1]
-        elif(action[1] == 'D'):
-            next_state[feature_index] = options_vector[curren_val_index+1]
-        else:
-            return state
-        return tuple(next_state)
+        try:
+            if(action[1] == 'U'):
+                next_state[feature_index] = options_vector[curren_val_index-1]
+            elif(action[1] == 'D'):
+                next_state[feature_index] = options_vector[curren_val_index+1]
+            else:
+                return state
+            return tuple(next_state)
+        except Exception as e:
+            print(e, state, action)
 
     def _bestCurrentAction(self, hp, random=False):
         state = hp.get()
@@ -146,7 +149,7 @@ class Q_Learning():
                     max_action = action
             self.policy[state] = max_action
 
-    def exploitPolicy(self):
+    def exploitPolicy(self, feature_num):
         total_val_loss = 0
         reward_by_episode = []
         for i in range(10):
@@ -154,17 +157,14 @@ class Q_Learning():
             state = p.get()
             total_val_loss = 0
             for iter in range(20):
+                self.learner = Net(feature_num, dropout=state[4])
                 if(state in self.policy.keys()):
                     action = self.policy[state]
-                    print(state, action, 1)
                 else:
-                    actions_vec = []
-                    actions = p.getOptionalActions()
-                    for f in actions.keys():
-                        for a in actions[f].keys():
-                            actions_vec.append((f, a))
+                    if(state not in self.Q_func.keys()):
+                        self._addStateAndPossibleActionsToQ(p)
+                    actions_vec = list(self.Q_func[state].keys())
                     action = choice(actions_vec)
-                    print(state, action, 2)
                 next_state = self.getNextState(p, action)
                 new_p = HyperParameters(next_state)
                 val_loss, epoch = self._trainLearnerAndGetPreds(new_p)
@@ -183,6 +183,7 @@ class Q_Learning():
             validation_loss_list = []"""
             p = HyperParameters(())
             acc_reward = 0
+            avg_val_loss = 0
             val_loss = 0
             r = 0
             for iter in range(self.args.num_of_iters):
@@ -196,7 +197,7 @@ class Q_Learning():
                     action = self._bestCurrentAction(p)
                     if(self.getQvalue(state, action) < self.args.threshold):
                         reward_by_episode.append(
-                            acc_reward/(iter+1))
+                            avg_val_loss/(iter+1))
                         print(
                             f"episode {episode+1}  iters:{iter+1} : val_loss: {val_loss}  reward: {r} ")
                         self.updateQfile(reward_by_episode)
@@ -206,6 +207,7 @@ class Q_Learning():
                 val_loss, epoch = self._trainLearnerAndGetPreds(new_p)
                 r = self._reward(val_loss, epoch)
                 acc_reward += r
+                avg_val_loss + =val_loss
                 # case when we havent visit in this state yet, then defint its q value to uniform distribution
                 if(next_state not in self.Q_func.keys()):
                     self._addStateAndPossibleActionsToQ(p)
@@ -223,11 +225,11 @@ class Q_Learning():
                 """if iter % 50 == 0:
                     print(
                         f"Current validation loss on epoch {iter+1} is: {trained_val_loss} ")"""
-            reward_by_episode.append(acc_reward/self.args.num_of_iters)
+            reward_by_episode.append(avg_val_loss/self.args.num_of_iters)
             print(
                 f"episode {episode+1} : avg_reward: {acc_reward/self.args.num_of_iters}  ")
             self.updateQfile(reward_by_episode)
-            if(episode % 10 == 0):
+            if(episode % 10 == 0 and episode != 0):
                 self.calcPolicy()
                 val_loss_be_episode = self.exploitPolicy()
                 val_by_ep.append(val_loss_be_episode)
@@ -238,4 +240,4 @@ class Q_Learning():
                 f3.write(str(episode)+" "+str(val_loss_be_episode)+" " +
                          str(val_by_ep)+"\n")
                 f3.close()
-        return reward_by_episode
+        return val_by_ep
