@@ -38,5 +38,5 @@ if __name__ == '__main__':
         else:
             q_learn = Q_Learning(hyper_p, q_args, model,
                                  X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, Q=None)
-        reward_by_episode = q_learn.q_learning_loop(feature_num)
-        plot_loss_graph(reward_by_episode)
+        val_by_episode = q_learn.q_learning_loop(feature_num)
+        plot_loss_graph(val_by_episode)

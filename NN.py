@@ -92,7 +92,11 @@ def train(X_train, y_train, model, X_val, y_val,
           hyper_params,
           criterion=nn.BCELoss()
           ):
-    lr = hyper_params[HyperParameters.hyperparams_dict['lr']]
+    try:
+        lr = hyper_params[HyperParameters.hyperparams_dict['lr']]
+    except Exception as e:
+        print(hyper_params)
+
     batch_size = hyper_params[HyperParameters.hyperparams_dict['batch_size']]
     n_epochs = hyper_params[HyperParameters.hyperparams_dict['n_epochs']]
     weight_decay = hyper_params[HyperParameters.hyperparams_dict['weight_decay']]

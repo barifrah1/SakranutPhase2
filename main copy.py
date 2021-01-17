@@ -28,12 +28,14 @@ if __name__ == '__main__':
     model = NN.Net(feature_num)
     hyper_p = HyperParameters()
     print("ffd")
-    if(os.path.isfile('Q_check.pickle')) == True:
+    if(os.path.isfile('Q_bar17.pickle')) == True:
         with open('Q_check.pickle', 'rb') as handle:
             Q = pickle.load(handle)
 
         with open('reward_check.pickle', 'rb') as handle:
             reward = pickle.load(handle)
+        print(reward)
+        #plot_loss_graph(reward)
         q_learn = Q_Learning(hyper_p, q_args, model,
                              X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, Q=Q)
         c = 0
@@ -41,13 +43,13 @@ if __name__ == '__main__':
         for state in Q.keys():
             for action in Q[state].keys():
                 if(Q[state][action] == 1):
-                    print(state, action, Q[state][action])
+                    #print(state, action, Q[state][action])
                     c2 += 1
                 c += 1
         print(c2/c, c2, c)
         print(reward)
         avg_val_loss = q_learn.explotPolicy()
-        print("avg_loss: ",avg_val_loss)
+        print("avg_loss: ", avg_val_loss)
     #reward_by_episode = q_learn.q_learning_loop(feature_num)
     # plot_loss_graph(reward_by_episode)
 

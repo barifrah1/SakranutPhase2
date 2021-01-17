@@ -23,10 +23,10 @@ class HyperParameters():
             self._setHyperParametersOptionalValuse()
 
     def _setHyperParametersOptionalValuse(self):
-        self.optional_values['n_epochs'] = [250, 200, 150, 100, 10]
+        self.optional_values['n_epochs'] = [200, 150, 100, 10]
         self.optional_values['batch_size'] = [30000, 20000, 10000, 5000]
-        self.optional_values['lr'] = [1, 1e-1, 1e-2, 1e-4, 1e-6]
-        self.optional_values['weight_decay'] = [1, 1e-2, 1e-3, 1e-5, 1e-8]
+        self.optional_values['lr'] = [1, 1e-1, 1e-2, 1e-4]
+        self.optional_values['weight_decay'] = [1, 1e-2, 1e-3, 1e-5]
         self.optional_values['dropout_param'] = [0.8, 0.5, 0.3]
 
     def get(self):

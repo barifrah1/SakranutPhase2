@@ -157,7 +157,7 @@ class Q_Learning():
             state = p.get()
             total_val_loss = 0
             for iter in range(20):
-                self.learner = Net(feature_num, dropout=state[4])
+                state = p.get()
                 if(state in self.policy.keys()):
                     action = self.policy[state]
                 else:
@@ -167,6 +167,7 @@ class Q_Learning():
                     action = choice(actions_vec)
                 next_state = self.getNextState(p, action)
                 new_p = HyperParameters(next_state)
+                self.learner = Net(feature_num, dropout=state[4])
                 val_loss, epoch = self._trainLearnerAndGetPreds(new_p)
                 total_val_loss += val_loss
                 p = new_p
@@ -187,7 +188,6 @@ class Q_Learning():
             val_loss = 0
             r = 0
             for iter in range(self.args.num_of_iters):
-                self.learner = Net(feature_num, dropout=p.get()[4])
                 # here we should train the learner_net
                 state = p.get()
                 sample = random()
@@ -204,10 +204,11 @@ class Q_Learning():
                         break
                 next_state = self.getNextState(p, action)
                 new_p = HyperParameters(next_state)
+                self.learner = Net(feature_num, dropout=p.get()[4])
                 val_loss, epoch = self._trainLearnerAndGetPreds(new_p)
                 r = self._reward(val_loss, epoch)
                 acc_reward += r
-                avg_val_loss + =val_loss
+                avg_val_loss += val_loss
                 # case when we havent visit in this state yet, then defint its q value to uniform distribution
                 if(next_state not in self.Q_func.keys()):
                     self._addStateAndPossibleActionsToQ(p)
@@ -229,9 +230,9 @@ class Q_Learning():
             print(
                 f"episode {episode+1} : avg_reward: {acc_reward/self.args.num_of_iters}  ")
             self.updateQfile(reward_by_episode)
-            if(episode % 10 == 0 and episode != 0):
+            if(episode % 10 == 0):  # "and episode != 0"""):
                 self.calcPolicy()
-                val_loss_be_episode = self.exploitPolicy()
+                val_loss_be_episode = self.exploitPolicy(feature_num)
                 val_by_ep.append(val_loss_be_episode)
                 with open('val_loss_by_episode_policy.pickle', 'wb') as handle:
                     pickle.dump(val_by_ep, handle,
