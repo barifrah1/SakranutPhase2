@@ -111,8 +111,8 @@ class Q_Learning():
 
     def _reward(self, val_loss, epoch):
         epsilon = 100*(0.62-val_loss)
-        if(val_loss < 0.595):
-            return 10000 + (0.595-val_loss)*10000
+        if(val_loss < 0.593):
+            return 1000*(0.62-val_loss)
         return epsilon
 
     def _addStateAndPossibleActionsToQ(self, hp):

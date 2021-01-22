@@ -5,7 +5,7 @@ class QArgs():
         self.gamma = 0.95
         self.eta = 0.1
         self.num_of_projects_to_start = 10
-        self.num_of_iters = 100
+        self.num_of_iters = 60
         self.iter_to_choose_best_action = 0
         self.num_episodes = 100
         self.threshold = -0.5
