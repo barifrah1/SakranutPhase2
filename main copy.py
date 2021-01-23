@@ -108,8 +108,8 @@ if __name__ == '__main__':
         c2 = 0
         for state in Q.keys():
             for action in Q[state].keys():
-                if(Q[state][action] != 1):
-                    # print(state, action, Q[state][action])
+                if(Q[state][action] >= 20):
+                    print(state, action, Q[state][action])
                     c2 += 1
                 c += 1
         print(c2/c, c2, c)

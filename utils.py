@@ -18,7 +18,10 @@ loss_function = nn.BCELoss()
 
 
 def plot_loss_graph(validation_loss_list):
-    epoches = list(range(1, len(validation_loss_list)+1))
+
+    epoches = list(range(0, len(validation_loss_list)))
+    print(len(epoches))
+    print(len(validation_loss_list))
     # calc the trendline
     z = numpy.polyfit(epoches, validation_loss_list, 1)
     p = numpy.poly1d(z)
@@ -28,7 +31,7 @@ def plot_loss_graph(validation_loss_list):
     # plot the graph
     plt.plot(validation_loss_list, 'b', label='validation loss')
     plt.title('Validation loss')
-    plt.xlabel('Episodes')
+    plt.xlabel('Episodes / 10')
     plt.ylabel('Loss')
     plt.legend()
     plt.show()
