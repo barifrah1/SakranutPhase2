@@ -174,6 +174,34 @@ class Q_Learning():
             reward_by_episode.append(total_val_loss/20)
         return sum(reward_by_episode)/10
 
+    def exploitPolicyForTest(self, feature_num):
+        total_val_loss = 0
+        reward_by_episode = []
+        steps = []
+        for i in range(10):
+            p = HyperParameters(())
+            state = p.get()
+            total_val_loss = 0
+            for iter in range(50):
+                state = p.get()
+                if(state in self.policy.keys()):
+                    action = self.policy[state]
+                else:
+                    if(state not in self.Q_func.keys()):
+                        self._addStateAndPossibleActionsToQ(p)
+                    actions_vec = list(self.Q_func[state].keys())
+                    action = choice(actions_vec)
+                next_state = self.getNextState(p, action)
+                new_p = HyperParameters(next_state)
+                self.learner = Net(feature_num, dropout=state[4])
+                val_loss, epoch = self._trainLearnerAndGetPreds(new_p)
+                total_val_loss += val_loss
+                p = new_p
+                steps.append(val_loss)
+            reward_by_episode.append(steps)
+            steps = []
+        return reward_by_episode
+
     def q_learning_loop(self, feature_num, is_random_policy=False):
         reward_by_episode = []
         val_by_ep = []
@@ -209,7 +237,7 @@ class Q_Learning():
                 r = self._reward(val_loss, epoch)
                 acc_reward += r
                 avg_val_loss += val_loss
-                # case when we havent visit in this state yet, then defint its q value to uniform distribution
+                # case when we havent visit in this state yet, then defint its q value to 1
                 if(next_state not in self.Q_func.keys()):
                     self._addStateAndPossibleActionsToQ(p)
                 bestAction = self._bestCurrentAction(new_p)
